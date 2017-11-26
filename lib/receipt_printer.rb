@@ -26,8 +26,8 @@ class ReceiptPrinter
     items.each { |item| print_output_for item, cost(item) }
   end
 
-  def print_output_for(label, amount)
-    output.puts "#{label}: #{format_output_for amount}"
+  def print_output_for(item, amount = send(item))
+    output.puts "#{item}: #{format_output_for amount}"
   end
 
   def format_output_for(item)
@@ -41,10 +41,10 @@ class ReceiptPrinter
 
   def print_receipt
     print_divider
-    print_output_for "subtotal", subtotal
-    print_output_for "tax", tax
+    print_output_for :subtotal
+    print_output_for :tax
     print_divider
-    print_output_for "total", total
+    print_output_for :total
   end
 
   def print_divider
