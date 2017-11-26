@@ -1,11 +1,12 @@
 class ReceiptPrinter
   COST = {
-    'meat'  => 5,
-    'milk'  => 3,
-    'candy' => 1
+    "meat"  => 5,
+    "milk"  => 3,
+    "candy" => 1
   }.freeze
 
   TAX = 0.05
+  RECEIPT_WIDTH = 13
 
   def initialize(output: $stdout, items:)
     @output = output
@@ -13,49 +14,45 @@ class ReceiptPrinter
   end
 
   def print
-    calculate_subtotal
+    print_items
     print_receipt
   end
 
   private
 
-  attr_reader :output, :items, :subtotal
+  attr_reader :output, :items
 
-  def calculate_subtotal
-    @subtotal = items.reduce(0) do |sum, item|
-      item_cost = COST[item]
-      output.puts "#{item}: #{format_output_for item_cost}"
+  def print_items
+    items.each { |item| print_output_for item, cost(item) }
+  end
 
-      sum + item_cost.to_i
-    end
+  def print_output_for(label, amount)
+    output.puts "#{label}: #{format_output_for amount}"
   end
 
   def format_output_for(item)
-    format('$%.2f', item)
+    currency_format = "$%.2f"
+    format(currency_format, item)
+  end
+
+  def cost(item)
+    COST[item].to_i
   end
 
   def print_receipt
     print_divider
-    print_subtotal
-    print_tax
+    print_output_for "subtotal", subtotal
+    print_output_for "tax", tax
     print_divider
-    print_total
+    print_output_for "total", total
   end
 
   def print_divider
-    output.puts '-' * 13
+    output.puts "-" * RECEIPT_WIDTH
   end
 
-  def print_subtotal
-    output.puts "subtotal: #{format_output_for subtotal}"
-  end
-
-  def print_tax
-    output.puts "tax: #{format_output_for tax}"
-  end
-
-  def print_total
-    output.puts "total: #{format_output_for total}"
+  def subtotal
+    items.reduce(0) { |sum, item| sum + cost(item) }
   end
 
   def tax
