@@ -6,7 +6,7 @@ Refactoring exercise using the [Extract Method](https://refactoring.com/catalog/
 
 ### Extract Method
 
-> Turn the fragment into a method whose name explains the purpose of the method. -- Martin Fowler
+> You have a code fragment that can be grouped together. Turn the fragment into a method whose name explains the purpose of the method. -- Martin Fowler
 
 #### Before
 
@@ -78,20 +78,16 @@ class ReceiptPrinter
   attr_reader :output, :items
 
   def print_items
-    items.each { |item| print_output_for item, cost(item) }
+    items.each { |item| print_output_for item, COST[item] }
   end
 
   def print_output_for(item, amount = send(item))
     output.puts "#{item}: #{format_output_for amount}"
   end
 
-  def format_output_for(item)
+  def format_output_for(amount)
     currency_format = "$%.2f"
-    format(currency_format, item)
-  end
-
-  def cost(item)
-    COST[item].to_i
+    format(currency_format, amount)
   end
 
   def print_receipt
@@ -107,7 +103,7 @@ class ReceiptPrinter
   end
 
   def subtotal
-    items.reduce(0) { |sum, item| sum + cost(item) }
+    items.reduce(0) { |sum, item| sum + COST[item] }
   end
 
   def tax
